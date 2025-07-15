@@ -2,47 +2,17 @@
 #include <string>
 #include <cstdlib>  // for rand()
 #include <limits> //for int inputs
-#include <vector> //for 
-#include <algorithm>
 /*
  	TO DO LIST 
  	- function for rng (COMPLETE)
- 	- function for check if code has no repitions (complete)
- 	- function for bulls and cows (complete)
- 	- AI Guess checker 
- 	- choice for easy or medium ai
+ 	- function for check if code has no repitions 
+ 	- function for bulls and cows
 */
 
 using namespace std;
 
-enum Difficulty {
-        Easy,
-        Normal,
-        Invalid
-};
-
-//just turn any input to lowercasing
-string toLower(const string& str) {
-    string lowerStr = str;
-    transform(lowerStr.begin(), lowerStr.end(), lowerStr.begin(),
-                   [](unsigned char c) { return tolower(c); });
-    return lowerStr;
-}
-
-Difficulty getDifficultyFromInput(const string& input) {
-    string lowerInput = toLower(input);
-
-    if (lowerInput == "easy" || lowerInput == "0") {
-        return Difficulty::Easy;
-    } else if (lowerInput == "normal" || lowerInput == "1") {
-        return Difficulty::Normal;
-    } else {
-        return Difficulty::Invalid;
-    }
-}
-
-//Function to check for any repetitions + removed unused "CurrentDigit"
-bool checker(int code[], int digit){
+//Function to check for any repetitions
+bool checker(int code[],int CurrentDigit, int digit){
  
  	for (int i = 0; i < 4; i++){
 	 
@@ -53,8 +23,8 @@ bool checker(int code[], int digit){
 	 return false;
 }
 
-// Function for generating numbers + converting to string + handling difficulty
-string Generator(Difficulty difficulty, const vector<string>& guessHistory = {}) {
+// Function for generating numbers + converting to string. 
+string Generator() {
     int code[4];
 	
 	//Makes sure that the first digit is not 0.
@@ -65,7 +35,7 @@ string Generator(Difficulty difficulty, const vector<string>& guessHistory = {})
 	int digit; //used to hold placement of remaining digits	
     do {
        digit = rand() % 10;
-    }   while (checker(code, digit));
+    }while (checker(code, i, digit));
     code [i] = digit;
     }
 
@@ -74,14 +44,6 @@ string Generator(Difficulty difficulty, const vector<string>& guessHistory = {})
     for (int i = 0; i < 4; i++) {
         result += to_string(code[i]);
     }
-
-    if (difficulty != Easy){
-        while(find(guessHistory.begin(), guessHistory.end(), result) != guessHistory.end()){
-            return Generator(difficulty, guessHistory);
-        }
-    }
-
-
     return result;
 }
 
@@ -92,12 +54,12 @@ bool intInput(string &input)
         
         if (!getline(cin, input)) {
             cin.clear();
-            cout << "Error reading input." << endl;
+            cout << "Error reading input.";
             continue;
         }
 
         if (input.empty()) {
-            cout << "Input cannot be empty." << endl;
+            cout << "Input cannot be empty.";
             continue;
         }
 
@@ -154,59 +116,17 @@ void countBullsAndCows(const string &secret, const string &guess, int &bulls, in
         }
     }
 }
-
-//checker for repeating guesses
-bool isAlreadyGuessed(const vector<string>& guessHistory, const string& guess) {
-    for (const string& prevGuess : guessHistory) {
-        if (prevGuess == guess) {
-            return true;
-        }
-    }
-    return false;
-}
-
-
 int main() {
 
     cout << "-----Bulls and Cows!-----\n";
 
-
-    //difficulty
-    string difficultyInput;
-    Difficulty selectedDifficulty = Difficulty::Invalid;
-
-    while(selectedDifficulty == Difficulty::Invalid){
-        cout << "Please select a difficulty to start the game! (easy/0, normal/1) : ";
-        cin >> difficultyInput;
-        cin.ignore(numeric_limits<streamsize>::max(), '\n');
-        selectedDifficulty = getDifficultyFromInput(difficultyInput);
-
-        if (selectedDifficulty == Difficulty::Invalid){
-            cout << "Invalid input! Please try again." << endl;
-        }
-    }
-    cout << "Your selected difficulty is ";
-    switch (selectedDifficulty) {
-        case Difficulty::Easy:
-            cout << "Easy" << endl;
-            break;
-        case Difficulty::Normal:
-            cout << "Normal" << endl;
-            break;
-        default:
-            break;
-    }
-    cout << endl;
-
-    //set the code!
-    string AiCode = Generator(selectedDifficulty);
+    string AiCode = Generator();
     string PlayerCode;
     cout << "Computers Code: " << AiCode << endl;
     cout << "Commit Your Code!" << endl;
 
     string PlayerCurrGuess;
     string AiCurrGuess;
-    vector <string> AiGuessHistory;
 
     int PlayerBulls = 0;
     int PlayerCows = 0;
@@ -216,30 +136,30 @@ int main() {
     while (!intInput(PlayerCode)) {
         cout << "Try again: ";
     }
-    cout << "Your secret code is " << PlayerCode << endl;
-    cout << endl;
     
 
-    //actual game
+    cout << "Your secret code is : " << PlayerCode << "\n\n";
+
     for(int i = 0; PlayerCurrGuess != AiCode && AiCurrGuess != PlayerCode; i++){
         cout << "-----Turn : " << i + 1 << " -----" << endl;
-
+        
         // player
         cout << "Input your guess!" << endl;
         while (!intInput(PlayerCurrGuess)) {
             cout << "Try again: ";
         }
         countBullsAndCows(AiCode, PlayerCurrGuess, PlayerBulls, PlayerCows);
-
+        
         // computer
-        AiCurrGuess = Generator(selectedDifficulty, AiGuessHistory);
-        AiGuessHistory.push_back(AiCurrGuess);
+        do {
+            AiCurrGuess = Generator();
+        } while (AiCurrGuess == PlayerCurrGuess); //ensure computer doesnt repeat players guess
+        
         countBullsAndCows(PlayerCode, AiCurrGuess, AiBulls, AiCows);
-
+        
         cout << "Your guessed : " << PlayerCurrGuess << ", scoring : " << PlayerBulls << " bulls and " << PlayerCows << " cows!" << endl;
         cout << "Computer guessed : " << AiCurrGuess << ", scoring : " << AiBulls << " bulls and " << AiCows << " cows!" << endl;
     }
-
 
     //win or draw
     if (PlayerCurrGuess == AiCode && AiCurrGuess == PlayerCode){
