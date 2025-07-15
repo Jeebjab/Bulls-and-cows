@@ -17,7 +17,7 @@ using namespace std;
 
 enum Difficulty {
         Easy,
-        Normal,
+        Medium,
         Invalid
 };
 
@@ -34,8 +34,8 @@ Difficulty getDifficultyFromInput(const string& input) {
 
     if (lowerInput == "easy" || lowerInput == "0") {
         return Difficulty::Easy;
-    } else if (lowerInput == "normal" || lowerInput == "1") {
-        return Difficulty::Normal;
+    } else if (lowerInput == "medium" || lowerInput == "1") {
+        return Difficulty::Medium;
     } else {
         return Difficulty::Invalid;
     }
@@ -75,6 +75,7 @@ string Generator(Difficulty difficulty, const vector<string>& guessHistory = {})
         result += to_string(code[i]);
     }
 
+    //medium(++) will never repeat a previous guess
     if (difficulty != Easy){
         while(find(guessHistory.begin(), guessHistory.end(), result) != guessHistory.end()){
             return Generator(difficulty, guessHistory);
@@ -176,7 +177,7 @@ int main() {
     Difficulty selectedDifficulty = Difficulty::Invalid;
 
     while(selectedDifficulty == Difficulty::Invalid){
-        cout << "Please select a difficulty to start the game! (easy/0, normal/1) : ";
+        cout << "Please select a difficulty to start the game! (easy/0, medium/1) : ";
         cin >> difficultyInput;
         cin.ignore(numeric_limits<streamsize>::max(), '\n');
         selectedDifficulty = getDifficultyFromInput(difficultyInput);
@@ -190,8 +191,8 @@ int main() {
         case Difficulty::Easy:
             cout << "Easy" << endl;
             break;
-        case Difficulty::Normal:
-            cout << "Normal" << endl;
+        case Difficulty::Medium:
+            cout << "Medium" << endl;
             break;
         default:
             break;
