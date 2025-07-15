@@ -2,15 +2,19 @@
 #include <string>
 #include <cstdlib>  // for rand()
 #include <limits> //for int inputs
-#include <vector> //for 
-#include <algorithm>
+#include <vector> // for guess history
+
 /*
  	TO DO LIST 
  	- function for rng (COMPLETE)
  	- function for check if code has no repitions (complete)
  	- function for bulls and cows (complete)
- 	- AI Guess checker 
- 	- choice for easy or medium ai
+ 	- AI Guess checker (complete)
+ 	- choice for easy or medium ai (complete)
+
+    MEMBERS
+    -   Gabriel Barrientos
+	-   Danial Ahmed (Zoey)
 */
 
 using namespace std;
@@ -23,9 +27,10 @@ enum Difficulty {
 
 //just turn any input to lowercasing
 string toLower(const string& str) {
-    string lowerStr = str;
-    transform(lowerStr.begin(), lowerStr.end(), lowerStr.begin(),
-                   [](unsigned char c) { return tolower(c); });
+    string lowerStr;
+    for (char c : str) {
+        lowerStr += tolower(c);
+    }
     return lowerStr;
 }
 
@@ -76,12 +81,19 @@ string Generator(Difficulty difficulty, const vector<string>& guessHistory = {})
     }
 
     //medium(++) will never repeat a previous guess
-    if (difficulty != Easy){
-        while(find(guessHistory.begin(), guessHistory.end(), result) != guessHistory.end()){
+    if (difficulty != Easy) {
+        bool found = false;
+        for (const string& prevGuess : guessHistory) {
+            if (prevGuess == result) {
+                found = true;
+                break;
+            }
+        }
+
+        if (found) {
             return Generator(difficulty, guessHistory);
         }
     }
-
 
     return result;
 }
