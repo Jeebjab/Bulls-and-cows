@@ -24,10 +24,10 @@ enum Difficulty {
         Medium,
         InvalidDifficulty
 };
-enum InputStyle {
+enum PlayMode {
         Manual,
         Automatic,
-        InvalidInputStyle
+        InvalidPlayMode
 };
 
 //just turn any input to lowercasing
@@ -48,6 +48,18 @@ Difficulty getDifficultyFromInput(const string& input) {
         return Difficulty::Medium;
     } else {
         return Difficulty::InvalidDifficulty;
+    }
+}
+
+PlayMode getPlayModeFromInput(const string& input){
+    string lowerInput = toLower(input);
+
+    if (lowerInput == "manual" || lowerInput == "0") {
+        return PlayMode::Manual;
+    } else if (lowerInput == "auto" || lowerInput == "automatic" || lowerInput == "1") {
+        return PlayMode::Automatic;
+    } else {
+        return PlayMode::InvalidPlayMode;
     }
 }
 
@@ -189,27 +201,27 @@ int main() {
     cout << "-----Bulls and Cows!-----" << endl;
     
     //file input
-    string inputStyleInput;
-    InputStyle selectedInputStyle = InputStyle::InvalidInputStyle;
+    string playModeInput;
+    PlayMode selectedPlayMode = PlayMode::InvalidPlayMode;
     
-    while(selectedInputStyle == InputStyle::InvalidInputStyle){
+    while(selectedPlayMode == PlayMode::InvalidPlayMode){
         cout << "Would you wish to enter your guesses manually or automatically through a pre supplied file?" << endl;
         cout << "0/Manual : Manual input" << endl;
         cout << "1/Automatic : Pre-supplied file input" << endl;
-        cin << selectedInputStyle;
+        cin >> playModeInput;
         cin.ignore(numeric_limits<streamsize>::max(), '\n');
-        // selectedInputStyle = getInputStyleFromInput(inputStyleInput);
-        
-        if (selectedInputStyle == InputStyle::InvalidInputStyle){
+        selectedPlayMode = getPlayModeFromInput(playModeInput);
+    
+        if (selectedPlayMode == PlayMode::InvalidPlayMode){
             cout << "Invalid input! Please try again." << endl;
         }
     }
     cout << "Your selected input style is ";
-    switch (selectedInputStyle) {
-        case InputStyle::Manual:
+    switch (selectedPlayMode) {
+        case PlayMode::Manual:
             cout << "Manual" << endl;
             break;
-        case InputStyle::Automatic:
+        case PlayMode::Automatic:
             cout << "Automatic" << endl;
             break;
         default:
