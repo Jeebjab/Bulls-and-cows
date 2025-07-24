@@ -206,8 +206,8 @@ int main() {
     
     while(selectedPlayMode == PlayMode::InvalidPlayMode){
         cout << "Would you wish to enter your guesses manually or automatically through a pre supplied file?" << endl;
-        cout << "0/Manual : Manual input" << endl;
-        cout << "1/Automatic : Pre-supplied file input" << endl;
+        cout << "0/Manual" << endl;
+        cout << "1/Automatic" << endl;
         cin >> playModeInput;
         cin.ignore(numeric_limits<streamsize>::max(), '\n');
         selectedPlayMode = getPlayModeFromInput(playModeInput);
